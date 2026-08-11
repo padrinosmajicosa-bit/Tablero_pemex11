@@ -1,0 +1,138 @@
+{% extends 'dashboard/base.html' %}
+
+{% block contenido %} 
+
+<h2 class="mb-4 text-dark fw-bold">📋 {{ titulo_seccion|default:"Gestión de Proyectos" }}</h2>
+<div class="card shadow p-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4>Listado de proyectos</h4>
+        <a href="{% url 'nuevo_proyecto' %}" class="btn btn-success d-flex align-items-center gap-2">
+            <i class="fas fa-plus"></i> + Nuevo Proyecto
+        </a>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form method="GET" action="{{ request.path }}" class="d-flex gap-2">
+                <input 
+                    type="text" 
+                    name="buscar" 
+                    class="form-control" 
+                    placeholder="Buscar por RCN, Proyecto o Responsable..." 
+                    value="{{ busqueda|default:'' }}"
+                >
+                <button type="submit" class="btn btn-primary px-4">
+                    🔍 Buscar
+                </button>
+                {% if busqueda %}
+                    <a href="{{ request.path }}" class="btn btn-secondary">
+                        Limpiar
+                    </a>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Categoría</th>
+                    <th>Folio (RCN / SR)</th>
+                    <th>Nombre / Descripción del Proyecto</th>
+                    <th>Responsable</th>
+                    <th>Estado</th>
+                    <th>Prioridad</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for proyecto in proyectos %}
+                <tr>
+                    <!-- 1. CATEGORÍA -->
+                    <td>
+                        {% if proyecto.rcn %}
+                            <span class="badge bg-danger fs-6">RCN</span>
+                        {% elif proyecto.sr %}
+                            <span class="badge bg-info text-dark fs-6">SR</span>
+                        {% elif proyecto.estado == 'en_proceso' %}
+                            <span class="badge bg-success fs-6">RCN ACTIVO</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark fs-6">BACKLOG</span>
+                        {% endif %}
+                    </td>
+
+                    <!-- 2. FOLIO (RCN / SR) -->
+                    <td class="fw-bold text-dark">
+                        {% if proyecto.rcn and proyecto.sr %}
+                            {{ proyecto.rcn }} / {{ proyecto.sr }}
+                        {% elif proyecto.rcn %}
+                            {{ proyecto.rcn }}
+                        {% elif proyecto.sr %}
+                            {{ proyecto.sr }}
+                        {% else %}
+                            <span class="text-muted fw-normal">—</span>
+                        {% endif %}
+                    </td>
+
+                    <!-- 3. NOMBRE DEL PROYECTO -->
+                    <td class="fw-semibold">
+                        {% if proyecto.proyecto %}
+                            {{ proyecto.proyecto }}
+                        {% else %}
+                            <span class="text-muted fst-italic">Sin nombre asignado</span>
+                        {% endif %}
+                    </td>
+
+                    <!-- 4. RESPONSABLE -->
+                    <td>{{ proyecto.responsable|default:"Sin asignar" }}</td>
+
+                    <!-- 5. ESTADO -->
+                    <td>
+                        {% if proyecto.estado == 'en_proceso' %}
+                            <span class="badge rounded-pill bg-success-subtle text-success border border-success">En Proceso</span>
+                        {% elif proyecto.estado == 'concluido' %}
+                            <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary">Concluido</span>
+                        {% elif proyecto.estado == 'cancelado' %}
+                            <span class="badge rounded-pill bg-danger-subtle text-danger border border-danger">Cancelado</span>
+                        {% else %}
+                            <span class="badge rounded-pill bg-secondary-subtle text-secondary border border-secondary">Inicial</span>
+                        {% endif %}
+                    </td>
+
+                    <!-- 6. PRIORIDAD -->
+                    <td>
+                        {% if proyecto.prioridad == 'alta' %}
+                            <span class="text-danger fw-bold">🔴 Alta</span>
+                        {% elif proyecto.prioridad == 'media' %}
+                            <span class="text-warning fw-bold">🟡 Media</span>
+                        {% else %}
+                            <span class="text-success fw-bold">🟢 Baja</span>
+                        {% endif %}
+                    </td>
+
+                    <!-- 7. ACCIONES -->
+                    <td class="text-center">
+                        <a href="{% url 'editar_proyecto' proyecto.id %}" class="btn btn-warning btn-sm me-1" title="Editar">
+                            ✏️
+                        </a>
+                        <a href="{% url 'eliminar_proyecto' proyecto.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que deseas eliminar este registro?');" title="Eliminar">
+                            🗑️
+                        </a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">
+                        No existen proyectos registrados que coincidan con la búsqueda.
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}

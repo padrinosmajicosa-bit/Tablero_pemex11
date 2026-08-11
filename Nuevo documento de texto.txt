@@ -1,0 +1,57 @@
+Antes de irte de Pemex (o de tu casa):
+Abres la terminal dentro de tu carpeta en la USB y sacas un respaldo de la base de datos corriendo:
+
+Bash
+docker exec -t NOMBRE_CONTENEDOR_DB pg_dump -U redmine redmine > respaldo.sql
+(Donde NOMBRE_CONTENEDOR_DB es el nombre del contenedor de la base de datos).
+
+Al llegar a tu otra computadora (casa o Pemex):
+Levantas Docker (docker compose up -d).
+
+Metes el respaldo que traes en la USB:
+
+Bash
+docker exec -i NOMBRE_CONTENEDOR_DB psql -U redmine redmine < respaldo.sql
+¡Listo! Todo lo que hiciste antes se restaura de inmediato.
+
+📌 ¿Qué te recomiendo hacer ahorita mismo?
+Revisa tu archivo docker-compose.yml (o el comando con el que estás levantando Redmine).
+
+Agrega el volumen mapeado a una carpeta local (./postgres_data) como en la Opción 1.
+
+Si estás usando docker-compose, detenlos con docker compose down y vuelve a levantarlos con docker compose up -d.
+
+¡Con eso resuelves el problema de raíz y tus tareas de Redmine van a viajar contigo a donde lleves tu USB!
+
+
+
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: redmine_db
+    restart: always
+    environment:
+      POSTGRES_DB: redmine
+      POSTGRES_USER: redmine
+      POSTGRES_PASSWORD: redmine_password
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redmine:
+    image: redmine:latest
+    container_name: redmine_app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      REDMINE_DB_POSTGRES: db
+      REDMINE_DB_PORT: 5432
+      REDMINE_DB_DATABASE: redmine
+      REDMINE_DB_USERNAME: redmine
+      REDMINE_DB_PASSWORD: redmine_password
+    depends_on:
+      - db

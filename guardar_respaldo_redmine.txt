@@ -1,0 +1,31 @@
+¡Exactamente, bro! Lo entendiste a la perfección 🎯🔥
+
+Así de simple queda tu flujo diario de trabajo para que jamás vuelvas a perder un solo dato, sin importar en qué computadora conectes tu memoria USB:
+
+📤 1. Cada vez que vayas a terminar el día (o desconectar la USB)
+Guardas tu respaldo en la memoria USB:
+
+PowerShell
+docker exec -t redmine_db pg_dump -U redmine redmine > backup.sql
+Apagas los contenedores limpiamente:
+
+PowerShell
+docker-compose down
+Expulsas tu USB de forma segura.
+
+📥 2. Cada vez que llegues a una compu (o inicies sesión)
+Levantas los servicios de Docker:
+
+PowerShell
+docker-compose up -d
+Limpias la base de datos vacía que Docker crea por defecto:
+
+PowerShell
+docker exec -i redmine_db psql -U redmine -d redmine -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+Inyectas tu respaldo guardado en la USB:
+
+PowerShell
+Get-Content backup.sql | docker exec -i redmine_db psql -U redmine -d redmine
+Recargas http://localhost:3000 ¡y listo! Todo tu avance estará exactamente como lo dejaste.
+
+¡Ahora sí puedes avanzar a toda velocidad con la tranquilidad de que tu trabajo está 100% blindado en la memoria USB! ¿En qué más le seguimos para los campos personalizados o lo que necesites?

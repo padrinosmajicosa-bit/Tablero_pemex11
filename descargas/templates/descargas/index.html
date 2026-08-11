@@ -1,0 +1,89 @@
+{% extends 'dashboard/base.html' %}
+
+{% block contenido %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags == 'error' %}danger{% elif message.tags == 'warning' %}warning{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show shadow-sm" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-md-10 mx-auto">
+            <div class="card shadow border-0 mb-4">
+                <div class="card-body p-5 text-center">
+                    <div class="text-success mb-3" style="font-size: 3rem;">
+                        📊
+                    </div>
+                    <h2 class="card-title text-dark fw-bold mb-2">Motor (Pandas)</h2>
+                    <p class="text-muted mb-4">
+                        Sube tu archivo de Excel (.xlsx) para procesar e inyectar proyectos de forma masiva en la base de datos PostgreSQL.
+                    </p>
+
+                    <form action="{% url 'subir_excel' %}" method="POST" enctype="multipart/form-data" class="mt-4">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <input class="form-control form-control-lg border-2" type="file" name="archivo_excel" accept=".xlsx, .xls" required style="border-style: dashed;">
+                        </div>
+                        <div class="d-grid gap-2 col-6 mx-auto">
+                            <button type="submit" class="btn btn-success btn-lg shadow-sm">
+                                🚀 Procesar y Cargar en Sistema
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card border-start border-success border-4 shadow-sm">
+                <div class="card-body">
+                    <h5>💡 Estructura requerida en el Excel:</h5>
+                    <p class="text-muted small mb-0">
+                        El archivo debe contener exactamente las siguientes columnas en la primera fila (respetando mayúsculas): <br>
+                        <code class="fw-bold text-dark">RCN | SR | Proyecto | Responsable | Estado | Prioridad</code>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-5" style="border-top: 2px dashed #bbb;">
+
+    <h2 class="mb-4 text-dark fw-bold">📥 Centro de Descargas de Reportes</h2>
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow border-0">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold text-success">📊 Reporte General Excel</h4>
+                    <p class="text-muted">
+                        Descargar toda la información del Dashboard en un format editable de hoja de cálculo.
+                    </p>
+                    <a href="{% url 'exportar_excel' %}" class="btn btn-success px-4">
+                        📊 Descargar Excel Real
+                    </a>  
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card shadow border-0">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold text-danger">📄 Reporte General PDF</h4>
+                    <p class="text-muted">
+                        Descargar el reporte completo formateado listo para impresión ejecutiva o de supervisión.
+                    </p>
+                    <a href="{% url 'exportar_pdf' %}" class="btn btn-danger">
+                        📄 Descargar PDF
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
