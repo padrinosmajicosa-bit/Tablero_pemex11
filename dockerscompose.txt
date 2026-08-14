@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: redmine_db
+    restart: always
+    environment:
+      POSTGRES_DB: redmine
+      POSTGRES_USER: redmine
+      POSTGRES_PASSWORD: 'redmine_password'
+    volumes:
+      - redmine_db_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  redmine:
+    image: redmine:latest
+    container_name: redmine_app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      REDMINE_DB_POSTGRES: db
+      REDMINE_DB_PORT: 5432
+      REDMINE_DB_DATABASE: redmine
+      REDMINE_DB_USERNAME: redmine
+      REDMINE_DB_PASSWORD: redmine_password
+    depends_on:
+      - db
+
+volumes:
+  redmine_db_data:

@@ -91,22 +91,17 @@ WSGI_APPLICATION = 'Tablero_pemex.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-
         'NAME': 'redmine',
-
         'USER': 'redmine',
-
         'PASSWORD': 'redmine_password',
-
-        'HOST': 'localhost',
-
-        'PORT': '5433',
+        'HOST': '127.0.0.1',
+        'PORT': '5434',
         'OPTIONS': {
+            'client_encoding': 'UTF8',
             'options': '-c lc_messages=C',
         },
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
