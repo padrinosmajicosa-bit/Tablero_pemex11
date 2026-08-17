@@ -1,0 +1,201 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    background: #f4f6f9; /* Fondo claro y limpio para la aplicación */
+}
+
+/* Contenedor principal */
+.wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ================= SIDEBAR ================= */
+#sidebar {
+    width: 260px;
+    background: #133228; /* Verde Oscuro Institucional (Pantone 627) */
+    color: white;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, .15);
+}
+
+.logo {
+    text-align: center;
+    padding: 30px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, .1);
+}
+
+.logo h3 {
+    color: #D4C19C; /* Crema Claro (Pantone 468) para resaltar el título */
+    font-weight: bold;
+}
+
+.logo small {
+    color: #b0c2bc;
+}
+
+#sidebar ul {
+    list-style: none;
+    margin-top: 20px;
+    padding-left: 0;
+}
+
+#sidebar ul li {
+    margin: 8px 0;
+}
+
+#sidebar ul li a {
+    color: #e2e8f0;
+    text-decoration: none;
+    display: block;
+    padding: 15px 25px;
+    transition: .3s;
+}
+
+#sidebar ul li a:hover {
+    background: #285C4D; /* Verde de Acento (Pantone 626) al pasar el cursor */
+    color: white;
+    padding-left: 35px;
+    border-left: 4px solid #B38E5D; /* Detalle elegante en tono Oro (Pantone 465) */
+}
+
+#sidebar i {
+    width: 30px;
+}
+
+/* ================= CONTENIDO ================= */
+#content {
+    margin-left: 260px;
+    width: 100%;
+    padding: 40px;
+}
+
+/* ================= ARMONIZACIÓN DE TÍTULOS Y COMPONENTES DE BARRA SUPERIOR ================= */
+
+/* Forzar cambio del título azul brillante y etiquetas del reloj en la barra superior */
+[class*="bg-light"] h4,
+.navbar-brand,
+.top-navbar h1,
+.top-navbar h2,
+.top-navbar span,
+.top-navbar div,
+.top-navbar p {
+    color: #133228 !important; /* Verde Oscuro Institucional */
+}
+
+/* Neutralizar las clases de texto azul nativas de Bootstrap que pintan el reloj o el título */
+.text-primary, 
+a.text-primary,
+div.text-primary,
+span.text-primary,
+h4.text-primary {
+    color: #133228 !important; /* Cambia el azul de Bootstrap por el Verde Pemex */
+}
+
+/* Título principal del Dashboard ("Dashboard Inteligente PEMEX") */
+#content h1,
+#content h2:not(.card h2),
+.dashboard-title { 
+    color: #133228 !important; 
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 25px;
+}
+
+/* Subtítulos de secciones secundarias (ej. "Estado General de Proyectos", "Distribución") */
+h3, h4, h5 {
+    color: #133228;
+    opacity: 0.9;
+}
+
+/* ================= TARJETAS GENERALES ================= */
+.card {
+    border: none;
+    border-radius: 15px;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, .05);
+    transition: .3s;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, .1);
+}
+
+/* Asegurar tamaño y estilo del número grande en indicadores */
+.card h2 {
+    font-size: 42px;
+    font-weight: bold;
+    color: inherit !important;
+}
+
+/* ================= REASIGNACIÓN DE COLORES INSTITUCIONALES (TARJETAS DE MÉTRICAS) ================= */
+
+/* Tarjeta RCN -> Guinda Principal Pantone 7421 */
+.card.bg-primary, 
+[class*="bg-primary"] {
+    background-color: #621132 !important;
+    color: white !important;
+}
+
+/* Tarjeta SR -> Verde de Acento Pantone 626 */
+.card.bg-success, 
+[class*="bg-success"] {
+    background-color: #285C4D !important;
+    color: white !important;
+}
+
+/* Tarjeta Backlog -> Oro/Arena Elegante Pantone 465 */
+.card.bg-warning, 
+[class*="bg-warning"] {
+    background-color: #B38E5D !important;
+    color: white !important;
+}
+
+/* Tarjeta Alertas -> Guinda Secundario Pantone 7420 */
+.card.bg-danger, 
+[class*="bg-danger"] {
+    background-color: #9D2449 !important;
+    color: white !important;
+}
+
+/* ================= RESPONSIVE ================= */
+@media(max-width: 768px) {
+    #sidebar {
+        width: 80px;
+    }
+
+    #sidebar .logo h3,
+    #sidebar .logo small {
+        display: none;
+    }
+
+    #sidebar ul li a {
+        text-align: center;
+        padding: 20px 0;
+    }
+
+    #sidebar ul li a i {
+        font-size: 22px;
+    }
+
+    #sidebar ul li a {
+        font-size: 0;
+    }
+
+    #sidebar ul li a i {
+        font-size: 20px;
+    }
+
+    #content {
+        margin-left: 80px;
+    }
+}

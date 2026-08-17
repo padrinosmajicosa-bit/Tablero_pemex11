@@ -2,7 +2,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-
-    path("", views.inicio, name="inicio"),
-
+    # Redirige a la vista del dashboard principal
+    path("", views.dashboard, name="dashboard"),
 ]
