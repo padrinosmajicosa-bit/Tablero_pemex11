@@ -10,9 +10,9 @@
             <h2 class="fw-bold text-primary mb-1">
                 <i class="fas fa-list-check me-2"></i>Gestión de Proyectos
             </h2>
-            <p class="text-muted mb-0">Listado general y seguimiento de requerimientos</p>
+            <p class="text-muted mb-0">Listado completo con todos los campos de requerimientos</p>
         </div>
-        
+
         <!-- Botón Nuevo Proyecto -->
         <a href="{% url 'nuevo_proyecto' %}" class="btn btn-success d-flex align-items-center gap-2 shadow-sm">
             <i class="fas fa-plus"></i>
@@ -20,125 +20,134 @@
         </a>
     </div>
 
-    <!-- Tarjeta Principal -->
+    <!-- Tarjeta Principal con Scroll Horizontal -->
     <div class="card shadow-sm border-0 rounded-3">
         <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light border-bottom">
+            <div class="table-responsive" style="max-height: 75vh; overflow-x: auto;">
+                <table class="table table-hover table-sm align-middle mb-0 text-nowrap" style="font-size: 0.85rem;">
+                    <thead class="table-light border-bottom sticky-top">
                         <tr class="text-secondary text-uppercase fs-7">
-                            <th scope="col" class="ps-4">ID</th>
-                            
-                            <!-- Columnas dinámicas según el tipo de vista -->
-                            {% if tipo_vista == 'SR' %}
-                                <th scope="col">Folio SR</th>
-                                <th scope="col">Estatus SR</th>
-                            {% endif %}
-
-                            <th scope="col">Proyecto / Descripción</th>
-
-                            {% if tipo_vista == 'CONCLUIDOS' %}
-                                <th scope="col">Fecha Fin</th>
-                            {% endif %}
-
-                            {% if tipo_vista == 'BACKLOG' or tipo_vista == 'ACTIVOS' or tipo_vista == 'RCN' %}
-                                <th scope="col">Prioridad</th>
-                            {% endif %}
-
-                            <th scope="col">Solicitante</th>
-                            <th scope="col">Asignado a</th>
+                            <th scope="col" class="ps-3">ID</th>
+                            <th scope="col">Folio SR</th>
+                            <th scope="col">Folio RCN</th>
+                            <th scope="col">Proyecto / Nombre</th>
+                            <th scope="col">Clasificación Requerimiento</th>
+                            <th scope="col">Grupo Tarea</th>
+                            <th scope="col">Subdirección Solicitante</th>
+                            <th scope="col">Prioridad Negocio</th>
+                            <th scope="col">Resumen Acciones</th>
+                            <th scope="col">Impacto Otros Proyectos</th>
+                            <th scope="col">Capacidades / Acciones STI</th>
+                            <th scope="col">Edo Salud</th>
+                            <th scope="col">Área Resp. Habilitación</th>
+                            <th scope="col">Área Apoyo Habilitación</th>
+                            <th scope="col">Fuente Negocio</th>
+                            <th scope="col">Prioridad EPT</th>
+                            <th scope="col">Consultor Negocio</th>
+                            <th scope="col">DO / Campo</th>
+                            <th scope="col">Situación Actual</th>
+                            <th scope="col">Fábrica Software</th>
+                            <th scope="col">Tipo Proyecto</th>
+                            <th scope="col">Categoría Proyecto</th>
+                            <th scope="col">% Planeado</th>
+                            <th scope="col">% Ponderado</th>
+                            <th scope="col">Fecha Inicio</th>
+                            <th scope="col">Fecha Fin</th>
                             <th scope="col">Estado</th>
-                            <th scope="col" class="text-center pe-4">Acciones</th>
+                            <th scope="col" class="text-center pe-3 sticky-end bg-light">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for proyecto in proyectos %}
-                            {% firstof proyecto.id proyecto.issue_id proyecto.pk as id_proyecto %}
-                            <tr>
-                                <td class="ps-4 fw-semibold text-secondary">
-                                    #{{ id_proyecto }}
-                                </td>
+                        {% firstof proyecto.id proyecto.issue_id proyecto.pk as id_proyecto %}
+                        <tr>
+                            <!-- ID -->
+                            <td class="ps-3 fw-semibold text-secondary">#{{ id_proyecto }}</td>
 
-                                {% if tipo_vista == 'SR' %}
-                                    <td>
-                                        <span class="badge bg-light text-dark border">
-                                            {% firstof proyecto.folio_sr proyecto.sr_folio '-' %}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        {% firstof proyecto.estatus_sr proyecto.sr_status '-' %}
-                                    </td>
-                                {% endif %}
+                            <!-- Folios -->
+                            <td>
+                                {% if proyecto.sr and proyecto.sr != '-' %}
+                                    <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle">{{ proyecto.sr }}</span>
+                                {% else %}<span class="text-muted">-</span>{% endif %}
+                            </td>
+                            <td>
+                                {% if proyecto.rcn and proyecto.rcn != '-' %}
+                                    <span class="badge bg-light text-dark border">{{ proyecto.rcn }}</span>
+                                {% else %}<span class="text-muted">-</span>{% endif %}
+                            </td>
 
-                                <td style="max-width: 300px;">
-                                    <div class="fw-bold text-dark text-truncate">
-                                        {% firstof proyecto.nombre proyecto.subject proyecto.titulo 'Sin título' %}
-                                    </div>
-                                    {% if proyecto.descripcion or proyecto.description %}
-                                        <small class="text-muted text-truncate d-block" style="max-width: 280px;">
-                                            {% firstof proyecto.descripcion proyecto.description %}
-                                        </small>
-                                    {% endif %}
-                                </td>
+                            <!-- Proyecto -->
+                            <td class="fw-bold text-dark">{{ proyecto.proyecto }}</td>
 
-                                {% if tipo_vista == 'CONCLUIDOS' %}
-                                    <td>
-                                        <small class="text-muted">
-                                            {% firstof proyecto.fecha_fin proyecto.closed_on proyecto.updated_on|date:"Y-m-d" '-' %}
-                                        </small>
-                                    </td>
-                                {% endif %}
+                            <!-- Clasificación / Grupo / Solicitante -->
+                            <td>{{ proyecto.clasificacion_requerimiento }}</td>
+                            <td>{{ proyecto.grupo_tarea }}</td>
+                            <td>{{ proyecto.solicitante }}</td>
 
-                                {% if tipo_vista == 'BACKLOG' or tipo_vista == 'ACTIVOS' or tipo_vista == 'RCN' %}
-                                    <td>
-                                        <span class="badge 
-                                            {% if proyecto.priority.name == 'Alta' or proyecto.prioridad == 'Alta' %}bg-danger
-                                            {% elif proyecto.priority.name == 'Normal' or proyecto.prioridad == 'Media' %}bg-info text-dark
-                                            {% else %}bg-secondary{% endif %}">
-                                            {% firstof proyecto.priority.name proyecto.prioridad '-' %}
-                                        </span>
-                                    </td>
-                                {% endif %}
+                            <!-- Prioridades y Resumen -->
+                            <td>
+                                <span class="badge {% if proyecto.prioridad_negocio == 'Alta' %}bg-danger{% elif proyecto.prioridad_negocio == 'Media' or proyecto.prioridad_negocio == 'Normal' %}bg-info text-dark{% else %}bg-secondary{% endif %}">
+                                    {{ proyecto.prioridad_negocio }}
+                                </span>
+                            </td>
+                            <td style="max-width: 200px;" class="text-truncate" title="{{ proyecto.resumen_acciones }}">
+                                {{ proyecto.resumen_acciones }}
+                            </td>
+                            <td>{{ proyecto.impacto_otros_proyectos }}</td>
+                            <td>{{ proyecto.capacidades_acciones_sti }}</td>
 
-                                <td>
-                                    <small class="text-dark">
-                                        {% firstof proyecto.author.name proyecto.solicitante proyecto.author '-' %}
-                                    </small>
-                                </td>
+                            <!-- Salud y Áreas -->
+                            <td>{{ proyecto.edo_salud }}</td>
+                            <td>{{ proyecto.area_responsable_habilitacion }}</td>
+                            <td>{{ proyecto.area_apoyo_habilitacion }}</td>
+                            <td>{{ proyecto.fuente_negocio }}</td>
+                            <td>{{ proyecto.prioridad_ept }}</td>
+                            <td>{{ proyecto.consultor_negocio }}</td>
 
-                                <td>
-                                    <small class="text-dark">
-                                        {% firstof proyecto.assigned_to.name proyecto.asignado_a proyecto.assigned_to '-' %}
-                                    </small>
-                                </td>
+                            <!-- Campos Técnicos / Fábrica -->
+                            <td>{{ proyecto.do_campo }}</td>
+                            <td style="max-width: 180px;" class="text-truncate" title="{{ proyecto.situacion_actual }}">
+                                {{ proyecto.situacion_actual }}
+                            </td>
+                            <td>{{ proyecto.fabrica_software }}</td>
+                            <td>{{ proyecto.tipo_proyecto }}</td>
+                            <td>{{ proyecto.categoria_proyecto }}</td>
 
-                                <td>
-                                    <span class="badge rounded-pill 
-                                        {% if proyecto.status.name == 'Cerrado' or proyecto.estatus == 'Concluido' %}bg-success-subtle text-success border border-success-subtle
-                                        {% elif proyecto.status.name == 'En Curso' or proyecto.estatus == 'Activo' %}bg-primary-subtle text-primary border border-primary-subtle
-                                        {% else %}bg-warning-subtle text-warning-emphasis border border-warning-subtle{% endif %}">
-                                        {% firstof proyecto.status.name proyecto.estatus 'En proceso' %}
-                                    </span>
-                                </td>
+                            <!-- Métricas / Porcentajes -->
+                            <td>{{ proyecto.pct_planeado }}</td>
+                            <td>
+                                {% if proyecto.pct_ponderado and proyecto.pct_ponderado != '-' %}
+                                    <span class="fw-semibold text-success">{{ proyecto.pct_ponderado }}%</span>
+                                {% else %}<span class="text-muted">-</span>{% endif %}
+                            </td>
 
-                                <td class="text-center pe-4">
-                                    <div class="btn-group btn-group-sm" role="group">
-                                        <!-- Enlace dinámico a detalle_proyecto usando id_proyecto -->
-                                        <a href="{% url 'detalle_proyecto' id_proyecto %}" class="btn btn-outline-primary" title="Ver detalle">
-                                            <i class="fas fa-eye"></i> Ver
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                            <!-- Fechas -->
+                            <td>{{ proyecto.fecha_inicio }}</td>
+                            <td>{{ proyecto.fecha_fin }}</td>
+
+                            <!-- Estado -->
+                            <td>
+                                <span class="badge rounded-pill {% if proyecto.estado == 'Cerrado' or proyecto.estado == 'Concluido' %}bg-success-subtle text-success border border-success-subtle{% elif proyecto.estado == 'En proceso' or proyecto.estado == 'ACTIVO' %}bg-primary-subtle text-primary border border-primary-subtle{% else %}bg-warning-subtle text-warning-emphasis border border-warning-subtle{% endif %}">
+                                    {{ proyecto.estado }}
+                                </span>
+                            </td>
+
+                            <!-- Acciones -->
+                            <td class="text-center pe-3 bg-white">
+                                <a href="{% url 'detalle_proyecto' id_proyecto %}" class="btn btn-sm btn-outline-primary py-0 px-2" title="Ver detalle completo">
+                                    <i class="fas fa-eye"></i> Ver
+                                </a>
+                            </td>
+                        </tr>
                         {% empty %}
-                            <tr>
-                                <td colspan="10" class="text-center py-5">
-                                    <div class="text-muted">
-                                        <i class="fas fa-folder-open fa-3x mb-3 text-secondary opacity-50"></i>
-                                        <p class="mb-0 fw-semibold">No se encontraron proyectos o requerimientos registrados.</p>
-                                    </div>
-                                </td>
-                            </tr>
+                        <tr>
+                            <td colspan="28" class="text-center py-5">
+                                <div class="text-muted">
+                                    <i class="fas fa-folder-open fa-3x mb-3 text-secondary opacity-50"></i>
+                                    <p class="mb-0 fw-semibold">No se encontraron proyectos o requerimientos registrados.</p>
+                                </div>
+                            </td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
