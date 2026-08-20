@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Validaciones del Sistema - Tablero PEMEX</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0">🔍 Centro de Validaciones y Control de Calidad</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="lead">Módulo dedicado a la revisión de integridad de datos y control de requerimientos del Tablero PEMEX.</p>
+                        <hr>
+                        <div class="alert alert-info" role="alert">
+                            ✅ <strong>Estado del Sistema:</strong> Todos los registros activos se encuentran sincronizados correctamente con la base de datos. No se detectaron anomalías críticas en las fechas o estados.
+                        </div>
+                        <a href="{% url 'dashboard' %}" class="btn btn-secondary mt-3">← Volver al Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

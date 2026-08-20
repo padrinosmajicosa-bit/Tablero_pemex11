@@ -25,9 +25,11 @@ urlpatterns = [
     path("descargas/", views.index_descargas, name="index_descargas"),
     path("subir-excel/", views.subir_excel, name="subir_excel"),
 
-    # 📊 Exportadores (Compatibilidad para 'exportar_excel' y 'exportar_proyectos_excel')
-    path("exportar/excel/", views.exportar_proyectos_excel, name="exportar_excel"),
+    # 📊 Exportadores (Ahora sincronizados con tus botones en HTML)
+    path("descargar/excel/", views.descargar_excel, name="descargar_excel"),
+    path("descargar/pdf/", views.descargar_pdf, name="descargar_pdf"),
+    
+    # Rutas adicionales por si otros componentes las necesitan
     path("exportar/excel-proyectos/", views.exportar_proyectos_excel, name="exportar_proyectos_excel"),
-    path("exportar/pdf/", views.exportar_proyectos_pdf, name="exportar_pdf"),
     path("exportar/pdf-proyectos/", views.exportar_proyectos_pdf, name="exportar_proyectos_pdf"),
 ]

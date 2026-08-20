@@ -1,7 +1,10 @@
 import json
+from io import BytesIO
+import pandas as pd
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db.models import Q
+from django.http import HttpResponse
 
 from proyectos.models import Proyecto
 
@@ -81,17 +84,14 @@ def _obtener_proyectos_filtrados(request, queryset, titulo, tipo_vista, seccion_
 def dashboard(request):
     proyectos = Proyecto.objects.all()
 
-    # Mapeamos todos los proyectos primero para asegurar compatibilidad total
     proyectos_mapeados = [mapear_datos_proyecto(p) for p in proyectos]
 
-    # Conteos seguros basados en los datos ya procesados por el helper
     total_rcn = sum(1 for p in proyectos_mapeados if p['rcn'] != '-')
     total_sr = sum(1 for p in proyectos_mapeados if p['sr'] != '-')
     total_backlog = sum(1 for p in proyectos_mapeados if p['rcn'] == '-' and p['sr'] == '-')
     total_rcn_activo = sum(1 for p in proyectos_mapeados if p['rcn'] != '-' and 'cerrado' not in p['estado'].lower() and 'concluido' not in p['estado'].lower())
     total_alertas = sum(1 for p in proyectos_mapeados if 'rojo' in p['estado_salud'].lower() or 'urgente' in p['prioridad'].lower() or 'alta' in p['prioridad'].lower())
 
-    # 2. Contexto hacia la plantilla (limitamos la tabla a los primeros 15)
     contexto = {
         "seccion_actual": "dashboard",
         "total_rcn": total_rcn,
@@ -263,14 +263,98 @@ def subir_excel(request):
     
     return render(request, "proyectos/subir_excel.html")
 
-
 def exportar_proyectos_excel(request):
-    """Vista para la descarga/exportación a Excel"""
-    messages.info(request, "La función de exportación a Excel estará disponible próximamente.")
-    return redirect("lista_proyectos")
+    """Vista blindada para la exportación a Excel utilizando los datos mapeados limpios"""
+    proyectos = Proyecto.objects.all()
+    
+    # Usamos nuestra función de mapeo para asegurar que los datos estén limpios y en formato texto/legible
+    proyectos_mapeados = [mapear_datos_proyecto(p) for p in proyectos]
+    
+    df = pd.DataFrame(proyectos_mapeados)
+    
+    # Asegurar que todas las columnas sean estrictamente texto plano para que openpyxl no falle
+    for col in df.columns:
+        df[col] = df[col].astype(str).fillna('-')
 
+    buffer = BytesIO()
+    with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
+        df.to_excel(writer, sheet_name='Reporte General', index=False)
+    
+    buffer.seek(0)
+    response = HttpResponse(
+        buffer.getvalue(),
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename="reporte_pemex.xlsx"'
+    return response
+
+from reportlab.lib.pagesizes import letter, landscape
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
 
 def exportar_proyectos_pdf(request):
-    """Vista para la descarga/exportación a PDF"""
-    messages.info(request, "La función de exportación a PDF estará disponible próximamente.")
-    return redirect("lista_proyectos")
+    """Vista para generar y descargar un PDF real y estructurado con los proyectos"""
+    buffer = BytesIO()
+    
+    # Crear el documento PDF apaisado (landscape) para que quepan bien las columnas
+    doc = SimpleDocTemplate(buffer, pagesize=landscape(letter), rightMargin=30, leftMargin=30, topMargin=30, bottomMargin=30)
+    elementos = []
+    
+    styles = getSampleStyleSheet()
+    estilo_titulo = ParagraphStyle(
+        'TituloReporte',
+        parent=styles['Heading1'],
+        fontSize=18,
+        textColor=colors.HexColor('#1b4d3e'),
+        spaceAfter=15,
+        alignment=1 # Centrado
+    )
+    
+    # Título del reporte
+    elementos.append(Paragraph("Reporte General - Tablero PEMEX", estilo_titulo))
+    elementos.append(Spacer(1, 10))
+    
+    # Obtener proyectos y armar los datos de la tabla
+    proyectos = Proyecto.objects.all()[:50] # Limitamos a 50 para el reporte inicial o todos los que gustes
+    
+    # Cabeceras de la tabla
+    data = [["ID", "Proyecto / Asunto", "Estado", "Responsable", "Prioridad", "Fase"]]
+    
+    for p in proyectos:
+        p_dict = mapear_datos_proyecto(p)
+        data.append([
+            str(p_dict['id']),
+            str(p_dict['proyecto'])[:35], # Recortar texto largo si es necesario
+            str(p_dict['estado']),
+            str(p_dict['consultor'])[:20],
+            str(p_dict['prioridad']),
+            str(p_dict['fase'])
+        ])
+    
+    # Crear la tabla y darle estilos limpios estilo corporativo
+    t = Table(data, colWidths=[40, 250, 80, 110, 80, 100])
+    t.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#1b4d3e')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor('#f9f9f9')),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#d3d3d3')),
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 1), (-1, -1), 9),
+    ]))
+    
+    elementos.append(t)
+    doc.build(elementos)
+    
+    buffer.seek(0)
+    response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="reporte_pemex.pdf"'
+    return response
+
+# Alias para mantener compatibilidad total con las rutas cortas del menú de descargas
+descargar_excel = exportar_proyectos_excel
+descargar_pdf = exportar_proyectos_pdf

@@ -62,9 +62,10 @@
                 <div class="card-body p-4">
                     <h4 class="fw-bold text-success">📊 Reporte General Excel</h4>
                     <p class="text-muted">
-                        Descargar toda la información del Dashboard en un format editable de hoja de cálculo.
+                        Descargar toda la información del Dashboard en un formato editable de hoja de cálculo.
                     </p>
-                    <a href="{% url 'exportar_excel' %}" class="btn btn-success px-4">
+                    <!-- Ajustado a 'descargar_excel' -->
+                    <a href="{% url 'descargar_excel' %}" class="btn btn-success px-4">
                         📊 Descargar Excel Real
                     </a>  
                 </div>
@@ -78,7 +79,8 @@
                     <p class="text-muted">
                         Descargar el reporte completo formateado listo para impresión ejecutiva o de supervisión.
                     </p>
-                    <a href="{% url 'exportar_pdf' %}" class="btn btn-danger">
+                    <!-- Ajustado a 'descargar_pdf' -->
+                    <a href="{% url 'descargar_pdf' %}" class="btn btn-danger">
                         📄 Descargar PDF
                     </a>
                 </div>
