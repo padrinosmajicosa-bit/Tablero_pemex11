@@ -1,0 +1,151 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}{{ titulo }} - Tablero PEMEX{% endblock %}
+
+{% block contenido %}
+<div class="container mt-4 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-11">
+            
+            <!-- TARJETA PRINCIPAL DE DETALLE -->
+            <div class="card shadow border-0 rounded-3 p-4">
+                
+                <!-- Encabezado con Botón de Regresar -->
+                <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+                    <div>
+                        <span class="badge bg-secondary mb-1">ID: #{{ proyecto.id }}</span>
+                        <h2 class="text-dark fw-bold m-0">
+                            <i class="fas fa-file-alt text-success me-2"></i>{{ proyecto.proyecto }}
+                        </h2>
+                    </div>
+                    <div>
+                        <a href="javascript:history.back()" class="btn btn-outline-secondary px-4">
+                            <i class="fas fa-arrow-left me-1"></i> Regresar
+                        </a>
+                    </div>
+                </div>
+
+                <!-- BLOQUE 1: Información General y Folios -->
+                <h5 class="text-success fw-bold mb-3"><i class="fas fa-info-circle me-2"></i>Información General</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="p-3 bg-light rounded border">
+                            <small class="text-muted d-block fw-bold">Tipo de Proyecto</small>
+                            <span class="text-dark fw-semibold">{{ proyecto.tipo_proyecto }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3 bg-light rounded border">
+                            <small class="text-muted d-block fw-bold">Folio SR</small>
+                            <span class="text-info fw-semibold">{{ proyecto.sr }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3 bg-light rounded border">
+                            <small class="text-muted d-block fw-bold">Folio RCN</small>
+                            <span class="text-dark fw-semibold">{{ proyecto.rcn }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3 bg-light rounded border">
+                            <small class="text-muted d-block fw-bold">Fase Actual</small>
+                            <span class="badge bg-success">{{ proyecto.fase }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BLOQUE 2: Responsables y Clasificación -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded border">
+                            <small class="text-muted d-block fw-bold">Responsable / Consultor</small>
+                            <span class="text-dark">{{ proyecto.consultor }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded border">
+                            <small class="text-muted d-block fw-bold">Subdirección Solicitante</small>
+                            <span class="text-dark">{{ proyecto.solicitante }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded border">
+                            <small class="text-muted d-block fw-bold">Consultor de Negocio</small>
+                            <span class="text-dark">{{ proyecto.consultor_negocio }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BLOQUE 3: Clasificación y Tareas -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded border">
+                            <small class="text-muted d-block fw-bold">Clasificación Requerimiento</small>
+                            <span class="text-dark">{{ proyecto.clasificacion_requerimiento }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded border">
+                            <small class="text-muted d-block fw-bold">Grupo de Tarea</small>
+                            <span class="text-dark">{{ proyecto.grupo_tarea }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded border">
+                            <small class="text-muted d-block fw-bold">Prioridad de Negocio</small>
+                            <span class="badge bg-danger">{{ proyecto.prioridad_negocio }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BLOQUE 4: Textos Largos (Resumen y Situación Actual) -->
+                <h5 class="text-success fw-bold mb-3"><i class="fas fa-clipboard-list me-2"></i>Evaluación y Situación</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded border h-100">
+                            <small class="text-muted d-block fw-bold mb-1">Resumen de Acciones</small>
+                            <p class="text-dark mb-0" style="white-space: pre-line;">{{ proyecto.resumen_acciones }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded border h-100">
+                            <small class="text-muted d-block fw-bold mb-1">Situación Actual</small>
+                            <p class="text-dark mb-0" style="white-space: pre-line;">{{ proyecto.situacion_actual }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BLOQUE 5: Fechas y Estado -->
+                <h5 class="text-success fw-bold mb-3"><i class="fas fa-calendar-alt me-2"></i>Cronograma y Métricas</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="p-3 bg-light rounded border">
+                            <small class="text-muted d-block fw-bold">Fecha de Inicio</small>
+                            <span class="text-dark">{{ proyecto.fecha_inicio }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3 bg-light rounded border">
+                            <small class="text-muted d-block fw-bold">Fecha de Fin</small>
+                            <span class="text-dark">{{ proyecto.fecha_fin }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3 bg-light rounded border">
+                            <small class="text-muted d-block fw-bold">Porcentaje Ponderado</small>
+                            <span class="text-success fw-bold">{{ proyecto.pct_ponderado }}%</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3 bg-light rounded border">
+                            <small class="text-muted d-block fw-bold">Estado del Proyecto</small>
+                            <span class="badge bg-primary">{{ proyecto.estado }}</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -74,7 +74,7 @@ body {
 /* ================= CONTENIDO ================= */
 #content {
     margin-left: 260px;
-    width: 100%;
+    width: calc(100% - 260px); /* CORREGIDO: Evita desbordamiento y bloqueo de clics */
     padding: 40px;
 }
 
@@ -181,13 +181,6 @@ h3, h4, h5 {
     #sidebar ul li a {
         text-align: center;
         padding: 20px 0;
-    }
-
-    #sidebar ul li a i {
-        font-size: 22px;
-    }
-
-    #sidebar ul li a {
         font-size: 0;
     }
 
@@ -197,5 +190,6 @@ h3, h4, h5 {
 
     #content {
         margin-left: 80px;
+        width: calc(100% - 80px); /* CORREGIDO para pantallas pequeñas */
     }
 }

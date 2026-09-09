@@ -4,20 +4,39 @@
 
 {% block contenido %}
 <div class="container-fluid mt-4 px-4">
-    <!-- Encabezado -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
+    <!-- Encabezado corregido con filas y columnas de Bootstrap -->
+    <div class="row align-items-center mb-4">
+        <div class="col-md-8 col-12 mb-2 mb-md-0">
             <h2 class="fw-bold text-primary mb-1">
-                <i class="fas fa-list-check me-2"></i>Gestión de Proyectos
+                <i class="fas fa-list-check me-2"></i>{{ titulo }}
             </h2>
             <p class="text-muted mb-0">Listado completo con todos los campos de requerimientos</p>
         </div>
 
-        <!-- Botón Nuevo Proyecto -->
-        <a href="{% url 'nuevo_proyecto' %}" class="btn btn-success d-flex align-items-center gap-2 shadow-sm">
-            <i class="fas fa-plus"></i>
-            <span>Nuevo Proyecto</span>
-        </a>
+        <!-- Botón Dinámico de Nuevo Registro alineado a la derecha -->
+        <div class="col-md-4 col-12 text-md-end text-start">
+            {% if "SR" in titulo|upper %}
+                <a href="{% url 'nuevo_proyecto' %}?fase=SR" class="btn btn-success d-inline-flex align-items-center gap-2 shadow-sm rounded-pill px-3">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Nuevo SR</span>
+                </a>
+            {% elif "BACKLOG" in titulo|upper %}
+                <a href="{% url 'nuevo_proyecto' %}?fase=BACKLOG" class="btn btn-success d-inline-flex align-items-center gap-2 shadow-sm rounded-pill px-3">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Añadir a Backlog</span>
+                </a>
+            {% elif "CONCLUIDO" in titulo|upper or "RCN" in titulo|upper %}
+                <a href="{% url 'nuevo_proyecto' %}?fase=CONCLUIDOS" class="btn btn-success d-inline-flex align-items-center gap-2 shadow-sm rounded-pill px-3">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Nuevo Concluido</span>
+                </a>
+            {% else %}
+                <a href="{% url 'nuevo_proyecto' %}?fase=ACTIVOS" class="btn btn-success d-inline-flex align-items-center gap-2 shadow-sm rounded-pill px-3">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Nuevo Proyecto Activo</span>
+                </a>
+            {% endif %}
+        </div>
     </div>
 
     <!-- Tarjeta Principal con Scroll Horizontal -->
@@ -67,12 +86,12 @@
                             <!-- Folios -->
                             <td>
                                 {% if proyecto.sr and proyecto.sr != '-' %}
-                                    <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle">{{ proyecto.sr }}</span>
+                                <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle">{{ proyecto.sr }}</span>
                                 {% else %}<span class="text-muted">-</span>{% endif %}
                             </td>
                             <td>
                                 {% if proyecto.rcn and proyecto.rcn != '-' %}
-                                    <span class="badge bg-light text-dark border">{{ proyecto.rcn }}</span>
+                                <span class="badge bg-light text-dark border">{{ proyecto.rcn }}</span>
                                 {% else %}<span class="text-muted">-</span>{% endif %}
                             </td>
 
@@ -117,7 +136,7 @@
                             <td>{{ proyecto.pct_planeado }}</td>
                             <td>
                                 {% if proyecto.pct_ponderado and proyecto.pct_ponderado != '-' %}
-                                    <span class="fw-semibold text-success">{{ proyecto.pct_ponderado }}%</span>
+                                <span class="fw-semibold text-success">{{ proyecto.pct_ponderado }}%</span>
                                 {% else %}<span class="text-muted">-</span>{% endif %}
                             </td>
 

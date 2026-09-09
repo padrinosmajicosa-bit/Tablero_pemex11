@@ -1,77 +1,93 @@
 {% extends 'dashboard/base.html' %}
 
 {% block contenido %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow p-4 border-0 rounded-3">
+                
+                <!-- TÍTULO CENTRADO EN LA PARTE SUPERIOR -->
+                <h2 class="mb-4 text-dark fw-bold text-center">
+                    {% if proyecto %}✏️ Editar Proyecto{% else %}📝 Registrar Nuevo Proyecto {% if fase_predefinida %}({{ fase_predefinida }}){% endif %}{% endif %}
+                </h2>
 
-<h2 class="mb-4 text-dark fw-bold">
-    {% if proyecto %}✏️ Editar Proyecto{% else %}📝 Registrar Nuevo Proyecto{% endif %}
-</h2>
+                <form method="POST" class="needs-validation" novalidate>
+                    {% csrf_token %}
 
-<div class="card shadow p-4 col-md-10 mx-auto">
-    <form method="POST" class="needs-validation">
-        {% csrf_token %}
+                    <!-- CAMPO OCULTO: Captura la fase que viene desde el botón -->
+                    {% if fase_predefinida %}
+                        <input type="hidden" name="fase" value="{{ fase_predefinida }}">
+                    {% endif %}
 
-        <!-- FILA 1: Tipo de Proyecto y Folio -->
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label class="form-label fw-bold">Tipo de Proyecto</label>
-                {{ formulario.tipo_proyecto }}
-            </div>
-            <div class="col-md-6">
-                <label class="form-label fw-bold">Folio / ID (RCN / SR)</label>
-                {{ formulario.folio }}
+                    <!-- FILA 1: Tipo de Proyecto y Folio -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Tipo de Proyecto</label>
+                            {{ formulario.tipo_proyecto }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Folio / ID (RCN / SR)</label>
+                            {{ formulario.folio }}
+                        </div>
+                    </div>
+
+                    <!-- FILA 2: Nombre del Proyecto y Responsable -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Nombre del Proyecto</label>
+                            {{ formulario.proyecto }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Responsable</label>
+                            {{ formulario.responsable }}
+                        </div>
+                    </div>
+
+                    <!-- FILA 3: Estado, Prioridad y Fase -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Estado</label>
+                            {{ formulario.estado }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Prioridad</label>
+                            {{ formulario.prioridad }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Fase Actual</label>
+                            {% if fase_predefinida %}
+                                <input type="text" class="form-control bg-light fw-bold text-uppercase" value="{{ fase_predefinida }}" readonly>
+                                <small class="text-muted">Asignada automáticamente</small>
+                            {% else %}
+                                {{ formulario.fase }}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- FILA 4: Fechas -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Fecha de Inicio</label>
+                            {{ formulario.fecha_inicio }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Fecha de Término</label>
+                            {{ formulario.fecha_fin }}
+                        </div>
+                    </div>
+
+                    <!-- BOTONES DE ACCIÓN -->
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <a href="javascript:history.back()" class="btn btn-secondary px-4">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-success px-4">
+                            💾 Guardar en Sistema
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
-
-        <!-- FILA 2: Nombre del Proyecto y Responsable -->
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label class="form-label fw-bold">Nombre del Proyecto</label>
-                {{ formulario.proyecto }}
-            </div>
-            <div class="col-md-6">
-                <label class="form-label fw-bold">Responsable</label>
-                {{ formulario.responsable }}
-            </div>
-        </div>
-
-        <!-- FILA 3: Estado, Prioridad y Fase -->
-        <div class="row mb-3">
-            <div class="col-md-4">
-                <label class="form-label fw-bold">Estado</label>
-                {{ formulario.estado }}
-            </div>
-            <div class="col-md-4">
-                <label class="form-label fw-bold">Prioridad</label>
-                {{ formulario.prioridad }}
-            </div>
-            <div class="col-md-4">
-                <label class="form-label fw-bold">Fase Actual</label>
-                {{ formulario.fase }}
-            </div>
-        </div>
-
-        <!-- FILA 4: Fechas -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <label class="form-label fw-bold">Fecha de Inicio</label>
-                {{ formulario.fecha_inicio }}
-            </div>
-            <div class="col-md-6">
-                <label class="form-label fw-bold">Fecha de Término</label>
-                {{ formulario.fecha_fin }}
-            </div>
-        </div>
-
-        <!-- BOTONES DE ACCIÓN -->
-        <div class="d-flex justify-content-end gap-2 mt-4">
-            <a href="{% url 'lista_proyectos' %}" class="btn btn-secondary px-4">
-                Cancelar
-            </a>
-            <button type="submit" class="btn btn-success px-4">
-                💾 Guardar en Sistema
-            </button>
-        </div>
-    </form>
+    </div>
 </div>
-
 {% endblock %}

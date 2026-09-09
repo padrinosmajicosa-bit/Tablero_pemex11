@@ -25,7 +25,7 @@ contador_global = 1
 for sheet_name in xls.sheet_names:
     df = pd.read_excel(xls, sheet_name=sheet_name)
     df.columns = df.columns.astype(str).str.strip().str.upper()
-    sheet_upper = sheet_name.upper()
+    sheet_upper = sheet_name.upper().strip()
 
     for _, row in df.iterrows():
         def obtener_val(*cols):
@@ -51,11 +51,9 @@ for sheet_name in xls.sheet_names:
                                 pass
             return None
 
-        # 1. Extracción e Identificación de Folios
+        # Identificación
         rcn_val = obtener_val('RCN', 'FOLIO RCN', 'FOLIO_RCN', 'FOLIO', 'NO.')
         sr_val = obtener_val('SR', 'FOLIO SR', 'FOLIO_SR', 'SOLICITUD')
-
-        # Si el folio es numérico (ej. 1090), conservamos la referencia original o el correlativo
         folio_num = obtener_val('#', 'NO', 'NO.', 'ID')
 
         if 'RCN' in sheet_upper and not rcn_val:
@@ -63,12 +61,12 @@ for sheet_name in xls.sheet_names:
         if 'SR' in sheet_upper and not sr_val:
             sr_val = f"SR-{folio_num if folio_num else contador_global}"
 
-        # 2. Nombre / Asunto
         proyecto_val = obtener_val(
             'ASUNTO', 'PROYECTO', 'DESCRIPCION', 'REQUERIMIENTO', 
             'DESCRIPCION DE REQUERIMIENTO', 'NOMBRE', 'TITULO'
         ) or f"Requerimiento #{contador_global}"
 
+        # Creamos el objeto asegurando la fase exacta de la pestaña
         proyecto_obj = Proyecto(
             rcn=rcn_val,
             sr=sr_val,
@@ -76,7 +74,7 @@ for sheet_name in xls.sheet_names:
             responsable=obtener_val('ASIGNADO A', 'RESPONSABLE', 'CONSULTOR DE NEGOCIO', 'SOLICITANTE', 'USUARIO') or 'Sin Asignar',
             estado=obtener_val('ESTADO', 'ESTATUS', 'SITUACIÓN') or 'En Proceso',
             prioridad=obtener_val('PRIORIDAD NEGOCIO', 'PRIORIDAD EPT', 'PRIORIDAD ORIGEN', 'PRIORIDAD') or '-',
-            fase=sheet_name,
+            fase=sheet_upper,  # <--- Guardamos la pestaña exacta en mayúsculas (ACTIVOS, BACKLOG, CONCLUIDOS, SR)
             clasificacion_requerimiento=obtener_val('CLASIFICACIÓN REQUERIMIENTO', 'CLASIFICACION REQUERIMIENTO'),
             grupo_tarea=obtener_val('GRUPO DE TAREA'),
             prioridad_negocio=obtener_val('PRIORIDAD NEGOCIO'),
@@ -109,8 +107,14 @@ for sheet_name in xls.sheet_names:
             f_inicio_habilitacion=obtener_fecha('F INICIO HABILITACIÓN', 'F INICIO HABILITACION'),
             f_fin_habilitacion=obtener_fecha('F FIN HABILITACIÓN', 'F FIN HABILITACION'),
         )
+        
+        try:
+            proyecto_obj.nombre = proyecto_val
+        except AttributeError:
+            pass
+            
         proyectos_a_crear.append(proyecto_obj)
         contador_global += 1
 
 Proyecto.objects.bulk_create(proyectos_a_crear)
-print(f"✅ ¡Éxito! Se procesaron {len(proyectos_a_crear)} requerimientos con todos sus campos desde {xls.sheet_names}.")
+print(f"✅ ¡Éxito! Se procesaron {len(proyectos_a_crear)} requerimientos.")
